@@ -23,10 +23,6 @@ def commit(func):
     return wrapper
 
 
-def is_authenticated():
-    pass
-
-
 @commit
 def create_table_user():
     query = '''CREATE TABLE IF NOT EXISTS users(
@@ -43,76 +39,63 @@ def create_table_user():
 
 
 @commit
-def create_table_todo():
-    query = '''CREATE TABLE IF NOT EXISTS todos(
+def create_table_foods():
+    query = '''CREATE TABLE IF NOT EXISTS foods(
         id serial primary key,
-        title varchar(200),
-        description text,
-        todo_type varchar(20) ,
+        name varchar(200),
+        recipe text,
         user_id int references users(id) on delete CASCADE
     );
     '''
     cur.execute(query)
-    return Response(201, 'Todo Created')
+    return Response(201, 'Food Created')
 
 
 def init():
     create_table_user()
     time.sleep(1)
-    create_table_todo()
+    create_table_foods()
 
-
+# init()
 
 @commit
-def add_todo(title, description, todo_type, user_id):
+def add_food(name, recipe, user_id):
     cur.execute(
-        "INSERT INTO todos (title, description, todo_type, user_id) VALUES (%s, %s, %s, %s)",
-        (title, description, todo_type, user_id)
+        "INSERT INTO foods (name, recipe, user_id) VALUES (%s, %s, %s)",
+        (name, recipe, user_id)
     )
-    return Response(201, "Todo muvaffaqiyatli qo'shildi")
+    return Response(201, "Taom muvaffaqiyatli qo'shildi")
 
 
-def get_todos(user_id):
-    cur.execute("SELECT id, title, description, todo_type FROM todos WHERE user_id = %s", (user_id,))
-    todos = cur.fetchall()
+def get_foods(user_id):
+    cur.execute("SELECT id, name, recipe FROM foods WHERE user_id = %s", (user_id,))
+    foods = cur.fetchall()
 
-    if not todos:
-        return BadRequest(404, "Sizda hech qanday todo mavjud emas")
+    if not foods:
+        return BadRequest(404, "Sizda hech qanday taom mavjud emas")
 
-    result = [f"ID: {todo[0]}, Title: {todo[1]}, Description: {todo[2]}, Type: {todo[3]}" for todo in todos]
+    result = [f"ID: {food[0]}, Name: {food[1]}, Recipe: {food[2]}" for food in foods]
     return Response(200, "\n".join(result))
 
 
 @commit
-def update_todo(todo_id, title=None, description=None, todo_type=None):
-    cur.execute("SELECT * FROM todos WHERE id = %s", (todo_id,))
+def update_food(food_id, name=None, recipe=None):
+    cur.execute("SELECT * FROM foods WHERE id = %s", (food_id,))
     if not cur.fetchone():
-        return BadRequest(404, "Todo topilmadi")
+        return BadRequest(404, "Taom topilmadi")
 
-    if title:
-        cur.execute("UPDATE todos SET title = %s WHERE id = %s", (title, todo_id))
-    if description:
-        cur.execute("UPDATE todos SET description = %s WHERE id = %s", (description, todo_id))
-    if todo_type:
-        cur.execute("UPDATE todos SET todo_type = %s WHERE id = %s", (todo_type, todo_id))
-
-    return Response(200, "Todo muvaffaqiyatli yangilandi")
+    if name:
+        cur.execute("UPDATE foods SET name = %s WHERE id = %s", (name, food_id))
+    if recipe:
+        cur.execute("UPDATE foods SET recipe = %s WHERE id = %s", (recipe, food_id))
+    return Response(200, "Taom muvaffaqiyatli yangilandi")
 
 
 @commit
-def delete_todo(todo_id):
-    cur.execute("SELECT * FROM todos WHERE id = %s", (todo_id,))
+def delete_food(food_id):
+    cur.execute("SELECT * FROM foods WHERE id = %s", (food_id,))
     if not cur.fetchone():
-        return BadRequest(404, "Todo topilmadi")
+        return BadRequest(404, "Taom topilmadi")
 
-    cur.execute("DELETE FROM todos WHERE id = %s", (todo_id,))
-    return Response(200, "Todo muvaffaqiyatli o'chirildi")
-
-# @commit
-# def migrate():
-#     query = '''insert into users(username, password, login_try_count,role)
-#     values ('john','admin123',0,'user');'''
-#     cur.execute(query)
-#
-#
-# migrate()
+    cur.execute("DELETE FROM foods WHERE id = %s", (food_id,))
+    return Response(200, "Taom muvaffaqiyatli o'chirildi")

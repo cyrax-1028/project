@@ -1,21 +1,19 @@
 from typing import Optional
 from models import User
 
+
 class Session:
     _instance = None
 
-    @classmethod
-    def new(cls):
+    def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = Session()
-            cls._instance.init()
+            cls._instance = super(Session, cls).__new__(cls)
+            cls._instance.session = None
         return cls._instance
 
-    def init(self):
-        self.session = None
-
-    def init(self, session: Optional[User] = None):
-        self.session = session
+    def __init__(self, session: Optional[User] = None):
+        if not hasattr(self, 'session'):
+            self.session = session
 
     def add_session(self, user: Optional[User] = None):
         self.session = user

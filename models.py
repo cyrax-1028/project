@@ -7,12 +7,6 @@ class UserRole(Enum):
     USER = 'user'
 
 
-class TodoType(Enum):
-    CREATED = 'created'
-    IN_PROGRESS = 'in_progress'
-    COMPLETED = 'completed'
-
-
 class User:
     def __init__(self, user_id,
                  username,
@@ -29,15 +23,13 @@ class User:
         self.created_at = created_at
 
 
-class Todo:
+class Food:
     def __init__(self, todo_id,
-                 title,
-                 description,
-                 todo_type,
+                 name,
+                 recipe,
                  user_id
                  ):
         self.id = todo_id
-        self.title = title
-        self.description = description
-        self.todo_type = todo_type
+        self.name = name
+        self.recipe = recipe
         self.user_id = user_id

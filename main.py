@@ -2,19 +2,19 @@ from auth import login, logout, register
 from utils import Response, BadRequest
 from session import Session
 from dto import UserRegisterDTO
-from db import add_todo, get_todos, update_todo, delete_todo
+from db import add_food, get_foods, update_food, delete_food
 
 
 def main():
-    session = Session.new()  # Yagona sessiya ob'ekti
+    session = Session()
     while True:
         print("\n1. Ro'yxatdan o'tish (Sign up)")
         print("2. Kirish (Log in)")
         print("3. Chiqish (Log out)")
-        print("4. Yangi todo qo'shish")
-        print("5. Todo’larni ko‘rish")
-        print("6. Todo’ni yangilash")
-        print("7. Todo’ni o‘chirish")
+        print("4. Yangi taom qo'shish")
+        print("5. Taomlarni ko‘rish")
+        print("6. Taomni yangilash")
+        print("7. Taomni o‘chirish")
         print("8. Chiqish (exit)")
 
         choice = input("\nTanlovni kiriting (1-8 yoki exit): ")
@@ -40,11 +40,10 @@ def main():
             if not session.check_session():
                 print("Avval tizimga kiring!")
                 continue
-            title = input("Todo nomi: ")
-            description = input("Todo tavsifi: ")
-            todo_type = input("Todo turi (created, in_progress, completed): ")
+            name = input("Taom nomi: ")
+            recipe = input("Taom retsepti: ")
             user_id = session.session.id
-            response = add_todo(title, description, todo_type, user_id)
+            response = add_food(name, recipe, user_id)
             print(response.message)
 
         elif choice == '5':
@@ -52,26 +51,25 @@ def main():
                 print("Avval tizimga kiring!")
                 continue
             user_id = session.session.id
-            response = get_todos(user_id)
+            response = get_foods(user_id)
             print(response.message)
 
         elif choice == '6':
             if not session.check_session():
                 print("Avval tizimga kiring!")
                 continue
-            todo_id = int(input("Yangilamoqchi bo'lgan todo ID’sini kiriting: "))
-            title = input("Yangi nom (bo‘sh qoldirishingiz mumkin): ")
-            description = input("Yangi tavsif (bo‘sh qoldirishingiz mumkin): ")
-            todo_type = input("Yangi turi (created, in_progress, completed): ")
-            response = update_todo(todo_id, title, description, todo_type)
+            food_id = int(input("Yangilamoqchi bo'lgan taom ID’sini kiriting: "))
+            name = input("Yangi nom (bo‘sh qoldirishingiz mumkin): ")
+            recipe = input("Yangi retsept (bo‘sh qoldirishingiz mumkin): ")
+            response = update_food(food_id, name, recipe)
             print(response.message)
 
         elif choice == '7':
             if not session.check_session():
                 print("Avval tizimga kiring!")
                 continue
-            todo_id = int(input("O'chirmoqchi bo'lgan todo ID’sini kiriting: "))
-            response = delete_todo(todo_id)
+            food_id = int(input("O'chirmoqchi bo'lgan taom ID’sini kiriting: "))
+            response = delete_food(food_id)
             print(response.message)
 
         elif choice == '8' or choice.lower() == 'exit':
